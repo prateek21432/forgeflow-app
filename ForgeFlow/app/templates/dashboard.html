@@ -1,0 +1,113 @@
+{% extends 'base.html' %} {% block title %}Projects · ForgeFlow {% endblock %}
+{% block content %}
+<section class="page-heading flex items-end justify-between gap-4">
+  <div>
+    <div class="eyebrow">YOUR WORK, IN PROGRESS</div>
+    <h1>
+      Let's build something<br />
+      <span class="muted-heading">worth shipping.</span>
+    </h1>
+    <p>One place to turn requirements into tested, reviewable changes.</p>
+  </div>
+  <a class="button primary" href="#new-project"> <span>＋</span>New project</a>
+</section>
+<div class="stats-grid">
+  <div class="stat-card">
+    <span>Projects</span>
+    <strong>{{ projects|length }}</strong>
+    <small>In your local workspace</small>
+  </div>
+  <div class="stat-card">
+    <span>Verified projects</span>
+    <strong
+      >{{ projects|selectattr('status','equalto','completed')|list|length
+      }}</strong
+    >
+    <small>Completed development runs</small>
+  </div>
+  <div class="stat-card">
+    <span>Execution</span>
+    <strong class="stat-word"
+      >{{ 'Isolated' if execution_mode == 'docker' else 'Local' }}</strong
+    >
+    <small
+      >{{ 'Docker containers with resource limits' if execution_mode == 'docker'
+      else 'Trusted code only · no OS sandbox' }}</small
+    >
+  </div>
+</div>
+<div class="dashboard-grid">
+  <section class="projects-section">
+    <div class="section-heading">
+      <h2>Your projects <span class="count">{{ projects|length }}</span></h2>
+      <span class="muted text-sm">Most recent first</span>
+    </div>
+    {% if projects %}
+    <div class="project-list">
+      {% for p in projects %}<a
+        class="project-card"
+        href="/projects/{{ p.id }}"
+      >
+        <span class="project-icon">&lt;/&gt;</span>
+        <div class="project-card-body">
+          <h3>{{ p.name }}</h3>
+          <p>
+            {{ p.current_task[:95] if p.current_task else 'Ready for your first
+            idea.' }}
+          </p>
+          <div class="project-meta">
+            <span>{{ p.branch }}</span>
+            <span>{{ p.created_at.strftime('%d %b %Y') }}</span>
+          </div>
+        </div>
+        <div class="project-card-end">
+          <span class="badge" data-status="{{ p.status }}"
+            >{{ p.status|replace('_',' ') }}</span
+          >
+          <span class="card-arrow">↗</span>
+        </div> </a
+      >{% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-projects">
+      <span class="empty-icon">&lt;/&gt;</span>
+      <h3>A fresh start.</h3>
+      <p>
+        Your projects will live here. Start with a small idea and build it one
+        verified change at a time.
+      </p>
+      <a href="#new-project" class="text-link">Create your first project →</a>
+    </div>
+    {% endif %}
+  </section>
+  <aside class="dashboard-aside">
+    <section class="panel new-project" id="new-project">
+      <div class="eyebrow">START SMALL. BUILD FORWARD.</div>
+      <h2>A new place for your idea.</h2>
+      <p>Give it a name. You can describe what to build in the next step.</p>
+      <form method="post" action="/projects">
+        <input type="hidden" name="csrf_token" value="{{ csrf }}" />
+        <label for="project-name">Project name</label>
+        <input
+          id="project-name"
+          name="name"
+          required
+          maxlength="120"
+          placeholder="e.g. My bookstore"
+        />
+        <button class="button primary w-full" type="submit">
+          Create project <span>→</span>
+        </button>
+      </form>
+    </section>
+    <section class="tip-card">
+      <span class="tip-label">A GOOD FIRST REQUEST</span>
+      <p>
+        “Build a task tracker with a list, a form to add tasks, and a way to
+        mark them complete.”
+      </p>
+      <a href="/guide" class="text-link">How ForgeFlow works →</a>
+    </section>
+  </aside>
+</div>
+{% endblock %}

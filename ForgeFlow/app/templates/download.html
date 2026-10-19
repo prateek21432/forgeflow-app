@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf }}">
+  <title>Download &amp; setup · ForgeFlow</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/download.css">
+</head>
+<body>
+<header><a class="brand" href="/">ff <strong>ForgeFlow</strong><span>•</span></a><a href="/dashboard">Open workspace ↗</a></header>
+<main>
+  <section class="hero">
+    <div><p class="eyebrow">YOUR IDEAS. YOUR LAPTOP.</p><h1>Take ForgeFlow<br>with you.</h1><p class="lead">Build small web apps with AI agents, watch the work happen, and keep the source code. Run your own copy locally.</p>
+    <div class="tags"><span>Windows</span><span>macOS</span><span>Linux</span><span>Docker optional</span></div></div>
+    <aside class="download-card"><span class="eyebrow">COMPLETE SOURCE PACKAGE</span><h2>ForgeFlow Final</h2><p>The latest platform, generated project source, tests, and a step-by-step setup guide.</p>
+      {% if archive_ready %}<p class="size">ZIP · {{ archive_mb }} MB</p>
+        {% if download_unlocked %}<a class="button" href="/download/file" download>Download ForgeFlow ↓</a>
+        {% else %}<form action="/download/unlock" method="post"><input type="hidden" name="csrf_token" value="{{ csrf }}"><label for="download-password">Download password</label><div class="unlock"><input id="download-password" name="password" type="password" required autocomplete="off"><button class="button" type="submit">Unlock</button></div></form>{% endif %}
+      {% else %}<p class="notice">No distribution ZIP is hosted by this local copy. Your extracted folder already contains the platform.</p>{% endif %}
+      {% if request.query_params.get('error') == 'password' %}<p class="error" role="alert">That password did not match. Try again.</p>{% endif %}
+      <small>No API keys or private accounts are included. Create your own account after setup. Your laptop does not connect to the owner's database.</small>
+    </aside>
+  </section>
+  <section class="features" aria-label="Included features">
+    <article><b>01</b><h3>Describe &amp; build</h3><p>Supervisor, Developer, and Tester agents turn a request into local application files.</p></article>
+    <article><b>02</b><h3>See real progress</h3><p>Live activity, executable tests, browser checks, and a preview you can inspect.</p></article>
+    <article><b>03</b><h3>Keep your work</h3><p>Resume saved changes. Download the latest draft or a separate validated checkpoint.</p></article>
+  </section>
+  <section id="setup"><p class="eyebrow">FIRST-TIME SETUP</p><h2>From ZIP to localhost.</h2><p>Extract the ZIP fully. Open the <strong>ForgeFlow</strong> folder. Choose one setup mode per extracted copy. Setup and previews do not call an AI model.</p>
+  <div class="steps"><article><span>1</span><div><h3>Install the basics</h3><p>Install Python 3.12 or newer and Git. On Windows, enable <strong>Add Python to PATH</strong>. For the Docker setup, install and start Docker Desktop in Linux-container mode (Docker Engine + Compose on Linux). The first setup needs internet.</p></div></article>
+  <article><span>2</span><div><h3>Choose your setup</h3><p>Open a terminal inside the extracted ForgeFlow folder. Node.js is unnecessary; compiled CSS is included.</p></div></article></div>
+  <details open><summary>Windows · with Docker <span>Recommended</span></summary><p>Keep Docker Desktop running. Open PowerShell in the ForgeFlow folder and run:</p><pre><code>python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts/setup.py
+.\.venv\Scripts\python.exe scripts/manage.py start</code></pre><p>The launcher builds the execution image and starts PostgreSQL automatically. The first run may take several minutes.</p></details>
+  <details><summary>Windows · without Docker</summary><p>This mode uses SQLite and runs generated code directly under your laptop account. Use it with trusted projects.</p><pre><code>python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts/setup.py --local
+.\.venv\Scripts\python.exe scripts/manage.py start --local</code></pre></details>
+  <details><summary>macOS / Linux · either mode</summary><pre><code>python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m playwright install chromium
+.venv/bin/python scripts/setup.py</code></pre><p>Edit <code>.env</code> and set <code>BROWSER_CHANNEL=</code> (empty) to use installed Chromium. On Linux, install browser system dependencies with <code>.venv/bin/python -m playwright install-deps chromium</code> if needed.</p><pre><code># With Docker running:
+.venv/bin/python scripts/manage.py start
+
+# Without Docker: use setup.py --local above, then:
+.venv/bin/python scripts/manage.py start --local</code></pre></details>
+  <div class="steps"><article><span>3</span><div><h3>Open the website and create an account</h3><p>Visit <a href="http://127.0.0.1:8791">http://127.0.0.1:8791</a> on that laptop. Register your own account. You begin with an empty dashboard.</p></div></article>
+  <article><span>4</span><div><h3>Import the included projects</h3><p>Replace <code>friend</code> with the username you registered. Run this in a second terminal inside ForgeFlow, then refresh the dashboard:</p><pre><code>.\.venv\Scripts\python.exe scripts/import_projects.py --username friend</code></pre><p>For no-Docker mode, add <code>--local</code>. On macOS/Linux use <code>.venv/bin/python</code>. Imported projects are drafts: use <strong>Start draft preview</strong> to open them. Original accounts, run history, uploads, and databases are not transferred.</p></div></article>
+  <article><span>5</span><div><h3>Add your own API key when you're ready to build</h3><p>Open <code>.env</code>, put your DeepSeek key after <code>LLM_API_KEY=</code>, save, and restart the platform. GPT is disabled. You can inspect the included source and open previews before adding any key.</p><p>Submitting a request or pressing <strong>Resume</strong> uses API credits. The shared configuration has limits that pause work and preserve progress; they are not a guaranteed dollar cap.</p></div></article></div>
+  </section>
+  <section class="bottom-grid"><article><h2>Start &amp; stop later</h2><p>Windows: use <strong>Start ForgeFlow.cmd</strong> / <strong>Stop ForgeFlow.cmd</strong>, or their <strong>without Docker</strong> alternatives.</p><pre><code>.\.venv\Scripts\python.exe scripts/manage.py stop
+.\.venv\Scripts\python.exe scripts/manage.py start</code></pre><p>Add <code>--local</code> to both commands in no-Docker mode. Closing a browser tab does not stop the server. Saved files remain after shutdown.</p></article>
+  <article><h2>Present using Uvicorn</h2><p>After first setup, stop the launcher. With Docker running, start its database and then the website manually:</p><pre><code>docker compose up -d database
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8791</code></pre><p>For an installation created with <code>setup.py --local</code>, skip the Docker command. Press <strong>Ctrl+C</strong> to stop Uvicorn. Use one worker. For macOS/Linux replace the Python path with <code>.venv/bin/python</code>.</p></article></section>
+  <details><summary>Quick troubleshooting</summary><ul><li><strong>Python not found:</strong> reopen the terminal after installation; try <code>py -3</code> on Windows.</li><li><strong>Docker unavailable:</strong> wait for Docker Desktop to finish starting, or use the no-Docker instructions in a fresh extraction.</li><li><strong>Port in use:</strong> stop the other copy or add <code>--port 8792</code> to both start and stop commands, then open localhost:8792.</li><li><strong>No projects:</strong> register first, then import with the same username and mode.</li><li><strong>Browser checks unavailable:</strong> Windows uses Microsoft Edge. Install Chromium and set <code>BROWSER_CHANNEL=</code> if Edge is unavailable.</li><li><strong>API errors:</strong> check your own provider key, model access, balance, and provider limits. Opening an existing preview needs no model.</li></ul></details>
+</main><footer>ForgeFlow · Local source. Visible progress. Honest verification.</footer>
+</body></html>

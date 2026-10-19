@@ -1,0 +1,8 @@
+.env
+.env.*
+.venv*
+.git
+.runtime
+workspace
+artifacts
+node_modules

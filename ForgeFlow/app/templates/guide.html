@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block breadcrumb %}How it works {% endblock %} {% block content %}
+<section class="page-heading">
+  <div class="eyebrow">A SMALL SOFTWARE TEAM, IN ONE WORKSPACE</div>
+  <h1>
+    Your idea.<br />
+    <span class="muted-heading">A clear path forward.</span>
+  </h1>
+  <p>ForgeFlow coordinates the work and shows the evidence along the way.</p>
+</section>
+<div class="guide-grid">
+  {% for number,title,text in [('01','Understand','The Supervisor reads your request and existing code, proposes a plan, and estimates what could be affected.'),('02','Build','The Developer uses a model and controlled file tools to create or modify real code. Existing files must be read before they are changed.'),('03','Test and repair','The Tester runs new acceptance tests and preserves earlier tests. Failures go back to the Developer. Limits stop endless retries.'),('04','Verify and save','The Supervisor reviews the result, checks that the app starts, and saves a Git checkpoint. Push status is reported separately.'),('05','Preview and continue','Open the running application. Submit another request to improve the same project without starting over.'),('06','Inspect the evidence','Review diffs, individual tests, failure output, and checkpoints. Risk predictions are estimates; tests show observed behavior.')] %}
+  <article class="panel guide-card">
+    <span class="step-number">{{ number }}</span>
+    <h2>{{ title }}</h2>
+    <p>{{ text }}</p>
+  </article>
+  {% endfor %}
+</div>
+<div class="panel guide-note">
+  <h2>Start with a small, specific request.</h2>
+  <p>
+    The first supported stack is FastAPI with HTML, CSS, JavaScript, and pytest.
+    Real payments, cloud deployment, and arbitrary frameworks are outside this
+    version. Keep customer data and production credentials out of demo projects.
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,1 @@
+{"name":"forgeflow-dashboard","private":true,"scripts":{"build:css":"tailwindcss -i app/static/input.css -o app/static/tailwind.css --minify"},"devDependencies":{"@tailwindcss/cli":"^4.1.0","prettier":"^3.9.9","tailwindcss":"^4.1.0"}}

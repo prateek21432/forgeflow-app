@@ -1,0 +1,226 @@
+{% extends 'base.html' %} {% block title %}{{ project.name }} · ForgeFlow {% endblock %} {% block content %}
+<div class="project-heading">
+  <div>
+    <a href="/dashboard" class="back-link">← All projects</a>
+    <h1>{{ project.name }}</h1>
+    <p class="muted">
+      <span class="branch-label">{{ project.branch }}</span>
+      <span id="project-status" class="badge" data-status="{{ project.status }}"
+        >{{ project.status }}</span
+      >
+    </p>
+    <p id="draft-notice" class="muted" hidden>Saved draft: preview and download are available. Some checks still need attention.</p>
+  </div>
+  <div class="project-actions">
+    <button class="button secondary" id="resume-verification" hidden
+            title="Continue saved progress with a fresh allowance; tests still verify the result">Resume saved work</button>
+    <a id="download-project" class="button secondary" download hidden
+       title="Download the source from your latest completed checkpoint">Download project ZIP</a>
+    <a id="download-validated" class="button secondary small" download hidden>Last validated ZIP</a>
+    <button class="button secondary" id="start-demo">Start preview</button>
+    <a
+      id="open-demo"
+      class="button primary"
+      target="_blank"
+      rel="noopener noreferrer"
+      hidden
+      >Open preview ↗</a
+    >
+  </div>
+</div>
+<section id="progress-popup" class="progress-popup" aria-label="Live project progress" hidden>
+  <div class="progress-caption">
+    <span><span class="progress-dot" aria-hidden="true"></span><span id="progress-title">Project in progress</span></span>
+    <span id="progress-description" role="status" aria-live="polite">Understanding your request</span>
+  </div>
+  <div class="progress-track" aria-label="Development stages">
+    <div class="progress-highlight" aria-hidden="true"></div>
+    <span data-stage="planning"><b>01</b><span>Understand</span></span>
+    <span data-stage="developing"><b>02</b><span>Build</span></span>
+    <span data-stage="testing"><b>03</b><span>Test &amp; repair</span></span>
+    <span data-stage="validating"><b>04</b><span>Verify</span></span>
+    <span data-stage="completed"><b>05</b><span>Preview</span></span>
+  </div>
+</section>
+<div class="project-layout">
+  <section class="panel conversation-panel">
+    <header class="panel-heading">
+      <div>
+        <h2>Build conversation</h2>
+        <p>Describe the outcome. Follow each step.</p>
+      </div>
+      <div class="activity-controls">
+        <select id="activity-filter" aria-label="Activity history">
+          <option value="latest">Latest request</option>
+          <option value="all">All requests</option>
+        </select>
+        <div class="live-controls">
+          <label class="follow-live" title="Keep the latest message in view. Turn off to read earlier messages.">
+            <input id="follow-live" type="checkbox" checked /> Follow live
+          </label>
+          <span id="connection" class="connection">Connecting</span>
+        </div>
+      </div>
+    </header>
+    <div
+      id="activity"
+      class="activity"
+      role="log"
+      aria-live="polite"
+      aria-label="Project activity"
+    >
+      <div class="conversation-empty" id="conversation-empty">
+        <span class="empty-icon">&lt;/&gt;</span>
+        <h3>What are we building?</h3>
+        <p>
+          Start with one clear requirement. Later requests will build on the
+          same project.
+        </p>
+        <button
+          class="prompt-suggestion"
+          data-prompt="Build a task tracker with a task list, a form to add tasks, and a button to mark each task complete."
+        >
+          A simple task tracker <span>↗</span>
+        </button>
+        <button
+          class="prompt-suggestion"
+          data-prompt="Build an e-commerce website with a product listing page, product details, cart, login and simulated checkout."
+        >
+          A small online store <span>↗</span>
+        </button>
+      </div>
+    </div>
+    <form id="chat" class="composer">
+      {% include 'model_selector.html' %}
+      <label class="sr-only" for="message">Your requirement</label>
+      <textarea
+        id="message"
+        name="message"
+        maxlength="8000"
+        rows="3"
+        required
+        placeholder="Describe what you'd like to build or change…"
+      ></textarea>
+      <div class="composer-bottom">
+        <span id="run-hint">Your files stay in this project.</span>
+        <div class="flex items-center gap-2">
+          <button
+            id="cancel-run"
+            class="button danger small"
+            type="button"
+            hidden
+          >
+            Stop run
+          </button>
+          <button id="send-request" class="button primary small" type="submit">
+            Send request <span>→</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+  <aside class="project-inspector">
+    <section class="panel inspector-card">
+      <div class="section-heading">
+        <h2>Current run</h2>
+        <span id="iteration" class="count">—</span>
+      </div>
+      <p id="current-task" class="muted">No request yet.</p>
+      <div id="plan"></div>
+    </section>
+    <section class="panel inspector-card">
+      <div class="section-heading">
+        <h2>Change impact</h2>
+        <span id="risk" class="badge">Not assessed</span>
+      </div>
+      <p id="risk-reason" class="muted">
+        An estimate of what the request may affect. Verified changes appear
+        below.
+      </p>
+      <div id="affected-files" class="file-tags"></div>
+    </section>
+    <section class="panel inspector-card">
+      <h2>Latest checks</h2>
+      <div id="test-summary" class="test-summary">
+        <span class="muted">No tests run yet.</span>
+      </div>
+      <a class="text-link" href="#evidence">See test evidence ↓</a>
+    </section>
+    <section class="inspector-note">
+      <span class="status-dot"> </span>
+      <p>
+        {{ 'Tests run in isolated containers.' if execution_mode == 'docker'
+        else 'Local mode runs trusted code with your OS permissions.' }} A
+        passing test is evidence, not a guarantee of correctness.
+      </p>
+    </section>
+  </aside>
+</div>
+<section class="evidence-section" id="evidence">
+  <div class="section-heading">
+    <div>
+      <div class="eyebrow">EVIDENCE, NOT JUST A STATUS</div>
+      <h2>See what actually happened.</h2>
+    </div>
+    <a id="download-report" class="button secondary small" hidden
+      >Download report</a
+    >
+  </div>
+  <div class="evidence-tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-panel="changes-panel">
+      Changes <span id="change-count">0</span>
+    </button>
+    <button role="tab" aria-selected="false" data-panel="tests-panel">
+      Tests
+    </button>
+    <button role="tab" aria-selected="false" data-panel="history-panel">
+      Checkpoints
+    </button>
+    <button role="tab" aria-selected="false" data-panel="files-panel">
+      Files
+    </button>
+    <button role="tab" aria-selected="false" data-panel="preview-panel">
+      Preview
+    </button>
+  </div>
+  <div class="panel evidence-body">
+    <div id="changes-panel" class="tab-panel">
+      <p class="empty-line">
+        File changes will appear after the Developer finishes a step.
+      </p>
+    </div>
+    <div id="tests-panel" class="tab-panel" hidden>
+      <p class="empty-line">No test results yet.</p>
+    </div>
+    <div id="history-panel" class="tab-panel" hidden>
+      <p class="empty-line">
+        A checkpoint is created after testing and startup validation.
+      </p>
+    </div>
+    <div id="files-panel" class="tab-panel" hidden>
+      <div class="file-browser">
+        <div id="file-list"></div>
+        <pre id="file-content">Choose a file to read its source.</pre>
+      </div>
+    </div>
+    <div id="preview-panel" class="tab-panel" hidden>
+      <div class="preview-toolbar">
+        <span id="preview-state">Preview is stopped.</span>
+        <button id="stop-demo" class="button secondary small" hidden>
+          Stop preview
+        </button>
+      </div>
+      <iframe
+        id="demo-frame"
+        title="Generated application preview"
+        sandbox="allow-scripts allow-forms allow-same-origin"
+        hidden
+      >
+      </iframe>
+      <p class="muted">
+        If the embedded view is unavailable, use Open preview.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

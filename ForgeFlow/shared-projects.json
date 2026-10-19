@@ -1,0 +1,44 @@
+{
+  "projects": [
+    {
+      "folder": "juniper-bookshop-4b8c1973",
+      "name": "Juniper Bookshop"
+    },
+    {
+      "folder": "juniper-compact-585e339d",
+      "name": "Juniper Compact"
+    },
+    {
+      "folder": "create-a-new-project-named-simple-calcul-a453ec46",
+      "name": "Create a new project named Simple Calculator."
+    },
+    {
+      "folder": "calculator-63772d9c",
+      "name": "calculator"
+    },
+    {
+      "folder": "music-player-fee891ba",
+      "name": "music player"
+    },
+    {
+      "folder": "bmi-69496c35",
+      "name": "BMI"
+    },
+    {
+      "folder": "basic-frontend-eef5c44b",
+      "name": "Basic frontend"
+    },
+    {
+      "folder": "shoes-store-frontend-04874271",
+      "name": "shoes store frontend"
+    },
+    {
+      "folder": "weather-api-86d94a63",
+      "name": "weather api"
+    },
+    {
+      "folder": "dentist-portal-c5a65071",
+      "name": "dentist portal"
+    }
+  ]
+}

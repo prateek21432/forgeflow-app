@@ -1,0 +1,10 @@
+<div class="model-choice">
+  <label for="model-profile">AI model</label>
+  <select id="model-profile" aria-describedby="model-choice-help" title="Applies to your next request or Resume. An active run keeps its model.">
+    {% for profile in model_profiles %}
+    <option value="{{ profile.id }}" {% if selected_profile == profile.id %}selected{% endif %}>{{ profile.label }}</option>
+    {% endfor %}
+  </select>
+  <small id="model-choice-help">Applies to your next request or Resume. An active run keeps its model.</small>
+  {% if unlimited_runs %}<small>AI run budgets are disabled. Use Stop run to interrupt development.</small>{% endif %}
+</div>

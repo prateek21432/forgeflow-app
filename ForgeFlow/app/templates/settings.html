@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block breadcrumb %}Configuration {% endblock %} {% block content %}
+<section class="page-heading">
+  <div class="eyebrow">{{ 'HOSTED' if hosted else 'LOCAL' }} INSTALLATION</div>
+  <h1>
+    A clear view<br />
+    <span class="muted-heading">of your setup.</span>
+  </h1>
+  <p>
+    Configuration lives in the private .env file. Secrets never appear here.
+  </p>
+</section>
+<div class="panel settings-panel">
+  {% include 'model_selector.html' %}
+  <h2>Runtime configuration</h2>
+  <dl>
+    {% for label,value in configuration %}
+    <div>
+      <dt>{{ label }}</dt>
+      <dd>{{ value }}</dd>
+    </div>
+    {% endfor %}
+  </dl>
+</div>
+<div class="panel guide-note">
+  <h2>Before your presentation</h2>
+  <p>
+    Confirm Docker is running, check your model quota, and rehearse a small
+    request once. Keep a validated project ready to preview. A provider error
+    will be shown honestly; the application does not substitute fake AI output.
+  </p>
+  <p>
+    After editing .env, restart the local server. Use the README for setup and
+    troubleshooting.
+  </p>
+</div>
+{% endblock %}

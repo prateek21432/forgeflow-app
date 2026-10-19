@@ -1,0 +1,19 @@
+services:
+  database:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forgeflow
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/setup.py first}
+      POSTGRES_DB: forgeflow
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - forgeflow_database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forgeflow"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+volumes:
+  forgeflow_database:

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="{{ csrf }}" />
+    <title>{% block title %}ForgeFlow {% endblock %}</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/tailwind.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/hosting.css" />
+  </head>
+  <body
+    {% if project is defined %}data-project-id="{{ project.id }}"
+    {% endif %}
+  >
+    {% if username %}
+    <aside class="sidebar">
+      <a class="brand" href="/dashboard">
+        <span class="brand-mark">ff</span>ForgeFlow<span class="brand-dot">
+        </span>
+      </a>
+      <div class="workspace-switch">
+        <span class="avatar">{{ username[0]|upper }}</span>
+        <div>
+          <strong>{{ username }}'s workspace</strong>
+          <small>Personal workspace</small>
+        </div>
+      </div>
+      <p class="nav-label">WORKSPACE</p>
+      <nav aria-label="Main navigation">
+        <a
+          class="nav-item {% if request.url.path == '/dashboard' or project is defined %}active{% endif %}"
+          href="/dashboard"
+        >
+          <span>▦</span>Projects</a
+        >
+        <a class="nav-item" href="/guide"> <span>▤</span>How it works</a>
+        <a class="nav-item" href="/settings"> <span>☷</span>Configuration</a>
+        <a class="nav-item" href="/download"><span>↓</span>Download &amp; setup</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-note">
+          <span class="status-dot"> </span>
+          <div>
+            <strong>{{ 'Running on your VPS' if hosted else 'Running locally' }}</strong>
+            <small>{{ 'Project files are saved on the server.' if hosted else 'Your projects stay on this machine.' }}</small>
+          </div>
+        </div>
+        <form action="/logout" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf }}" />
+          <button class="signout">Sign out <span>↗</span></button>
+        </form>
+      </div>
+    </aside>
+    {% endif %}
+    <div class="{% if username %}app-shell{% else %}auth-shell{% endif %}">
+      {% if username %}
+      <header class="topbar">
+        <div>
+          Workspace <span>/</span> {% if project is defined %}{{ project.name
+          }}{% else %} {% block breadcrumb %}Projects {% endblock %}{% endif %}
+        </div>
+        <span class="environment">
+          <span class="status-dot"> </span>{{ 'Hosted environment' if hosted else 'Local environment' }}</span
+        >
+      </header>
+      {% endif %}
+      <main id="main-content">{% block content %} {% endblock %}</main>
+      <footer>
+        ForgeFlow <span>·</span> Build with intent. Verify every change.
+      </footer>
+    </div>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+    <script src="/static/app.js" defer></script>
+    {% block scripts %} {% endblock %}
+  </body>
+</html>

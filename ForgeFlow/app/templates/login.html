@@ -1,0 +1,113 @@
+{% extends 'base.html' %} {% block title %}Welcome · ForgeFlow {% endblock %} {% block content %}
+<div class="auth-layout">
+  <section class="auth-intro">
+    <a class="brand" href="/"> <span class="brand-mark">ff</span>ForgeFlow</a>
+    <div class="eyebrow">
+      <span class="status-dot"> </span> YOUR {{ 'HOSTED' if hosted else 'LOCAL' }} DEVELOPMENT STUDIO
+    </div>
+    <h1>
+      Good ideas deserve<br />
+      <em>working software.</em>
+    </h1>
+    <p>
+      Describe a change. Follow the work. See exactly what was tested before you
+      take the next step.
+    </p>
+    <div class="auth-flow">
+      <span>Understand</span>
+      <span>Build</span>
+      <span>Verify</span>
+      <span>Preview</span>
+    </div>
+    <div class="intro-detail">
+      <span class="check-icon">✓</span>
+      <div>
+        <strong>More than a generated answer</strong>
+        <small
+          >Real files, executable tests, and a clear history of every
+          change.</small
+        >
+      </div>
+    </div>
+  </section>
+  <section class="auth-card">
+    <div class="eyebrow">LET'S GET STARTED</div>
+    <h2>Your workspace awaits.</h2>
+    <p class="muted">{{ 'Sign in to continue, or create a local account.' if registration_enabled else 'Private workspace. Sign in with the account provided by the owner.' }}</p>
+    {% if error %}
+    <div class="alert" role="alert">{{ error }}</div>
+    {% endif %}
+    <div class="auth-tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-auth-tab="signin">
+        Sign in
+      </button>
+      {% if registration_enabled %}<button role="tab" aria-selected="false" data-auth-tab="register">
+        Create account
+      </button>{% endif %}
+    </div>
+    <form action="/login" method="post" id="signin" class="auth-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf }}" />
+      <label for="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        autocomplete="username"
+        required
+        placeholder="Your username"
+        maxlength="40"
+      />
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        required
+        placeholder="Your password"
+        maxlength="200"
+      />
+      <button class="button primary" type="submit">
+        Open workspace <span>→</span>
+      </button>
+    </form>
+    {% if registration_enabled %}<form
+      action="/register"
+      method="post"
+      id="register"
+      class="auth-form"
+      hidden
+    >
+      <input type="hidden" name="csrf_token" value="{{ csrf }}" />
+      <label for="new-username">Choose a username</label>
+      <input
+        id="new-username"
+        name="username"
+        autocomplete="username"
+        minlength="3"
+        maxlength="40"
+        pattern="[a-z0-9][a-z0-9-]{2,39}"
+        required
+        placeholder="e.g. arpit"
+      />
+      <small>3–40 lowercase letters, numbers, or hyphens.</small>
+      <label for="new-password">Create a password</label>
+      <input
+        id="new-password"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        minlength="5"
+        maxlength="200"
+        required
+        placeholder="At least 5 characters"
+      />
+      <button class="button primary" type="submit">
+        Create workspace <span>→</span>
+      </button>
+    </form>{% endif %}
+    <p class="auth-footnote">
+      This account belongs to this {{ 'hosted' if hosted else 'local' }} installation.
+    </p>
+  </section>
+</div>
+{% endblock %}
